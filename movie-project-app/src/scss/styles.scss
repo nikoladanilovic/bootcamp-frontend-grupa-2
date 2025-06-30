@@ -1,0 +1,28 @@
+@import "bootstrap/scss/bootstrap";
+
+body {
+    margin: 2em;
+}
+
+.mainHeader {
+    margin-bottom: 2em;
+    text-align: center;
+}
+
+.search-form {
+    text-align: center;
+}
+
+.point-to-click {
+    cursor: pointer;
+}
+
+.card-hover-pop {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card-hover-pop:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
