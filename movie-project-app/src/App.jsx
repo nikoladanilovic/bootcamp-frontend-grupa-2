@@ -138,6 +138,7 @@ function App() {
   }, [nameOfMovie]);
 
   function setGenre(movieGenre){
+    console.log(movieGenre);
     setGenreState(movieGenre);
   }
 
