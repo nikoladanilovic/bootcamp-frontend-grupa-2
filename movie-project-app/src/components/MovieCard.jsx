@@ -1,4 +1,6 @@
 export default function MovieCard( {movie} ) {
+
+
     return(
         <div className="card mb-3 point-to-click card-hover-pop">
         <div className="card-body">
