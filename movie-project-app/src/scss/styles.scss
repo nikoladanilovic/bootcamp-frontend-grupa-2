@@ -17,6 +17,18 @@ body {
     cursor: pointer;
 }
 
+.delete-btn {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    margin: 2em;
+    
+    width: 5em;
+    height: 3em;
+    
+    
+}
+
 .card-hover-pop {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }

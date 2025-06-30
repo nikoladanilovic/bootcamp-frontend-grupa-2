@@ -102,8 +102,9 @@ function App() {
   useEffect(() => {
     const fetchEvents = async () => {
         console.log(currentPage);
-
+        console.log(genre);
         let pageFilteringSetup = JSON.parse(localStorage.getItem("filterSetup"));
+        
         
         setMovieList(await movieClient.Get(
           pageFilteringSetup.releasedYearFilter,
@@ -138,12 +139,26 @@ function App() {
   }, [nameOfMovie]);
 
   function setGenre(movieGenre){
-    console.log(movieGenre);
+    setCurrentPage(1);
     setGenreState(movieGenre);
   }
 
   function setNameOfMovie(movieName) {
+    setCurrentPage(1);
     setNameOfMovieState(movieName);
+  }
+
+  async function deleteMovie(movieId){
+    let pageFilteringSetup = JSON.parse(localStorage.getItem("filterSetup"));
+    setMovieList(await movieClient.DeleteClickedMovie(
+      movieId,
+      pageFilteringSetup.releasedYearFilter,
+      pageFilteringSetup.ordering,
+      pageFilteringSetup.moviesPerPage,
+      pageFilteringSetup.page,
+      pageFilteringSetup.genre,
+      pageFilteringSetup.nameOfMovie
+    ));
   }
 
 
@@ -155,11 +170,10 @@ function App() {
 
       <MovieSearchForm setGenre={setGenre}
         setNameOfMovie={setNameOfMovie}
-        nameOfMovie={nameOfMovie}
       />
 
       {movieList.map((movie, index) => (
-        <MovieCard key={index} movie={movie}/>
+        <MovieCard key={index} movie={movie} deleteMovie={deleteMovie}/>
       ))}
       
       <PageNavigation 

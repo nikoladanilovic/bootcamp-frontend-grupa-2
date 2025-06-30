@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 export default function AddMovieInputArea(){
-    const [title, setTitle] = useState('');
+  const [title, setTitle] = useState('');
   const [releaseYear, setReleaseYear] = useState('');
   const [duration, setDuration] = useState('');
   const [description, setDescription] = useState('');
