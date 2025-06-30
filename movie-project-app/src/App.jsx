@@ -164,7 +164,9 @@ function App() {
       <PageNavigation 
         movieClient={movieClient}
         changeCurrentPage={changeCurrentPage}
-        pageSize={JSON.parse(localStorage.getItem("filterSetup")).moviesPerPage}
+        pageSize={
+          JSON.parse(localStorage.getItem("filterSetup"))?.moviesPerPage ?? pageSize
+        }
         currentPage={currentPage}
         genre={genre}
         nameOfMovie={nameOfMovie}
