@@ -18,6 +18,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
+  // Hardcoded admin user ID (replace with your admin user's UUID)
+  const ADMIN_ID = '7e51a570-254d-4d05-a20f-246e57e42e2d'; 
+
   // Check for existing user in localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -159,7 +162,7 @@ function App() {
       {user ? (
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h3>Welcome, {user.username}!</h3>
+            <h3>Welcome, {user.username} {user.id === ADMIN_ID ? '(Admin)' : ''}!</h3>
             <button
               onClick={handleLogout}
               className="bg-red-600 text-white px-4 py-2 rounded"
@@ -185,7 +188,11 @@ function App() {
             genre={genre}
             nameOfMovie={nameOfMovie}
           />
-          <AddMovieInputArea />
+          {user.id === ADMIN_ID ? (
+            <AddMovieInputArea />
+          ) : (
+            <p className="text-center mt-4">Only admins can add movies.</p>
+          )}
         </div>
       ) : (
         <UserAuthForm setUser={setUser} setError={setError} />
