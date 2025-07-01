@@ -1,7 +1,19 @@
-import { useState } from "react";
+import axios from "axios";
+import MovieApiClients from "../api_clients/MovieApiClients";
 
-export default function MovieSearchForm({setGenre, setNameOfMovie}) {
+import { useEffect, useState } from "react";
+
+export default function MovieSearchForm({setGenre, setNameOfMovie, movieClient}) {
     const [nameMovie, setNameMovie] = useState("");
+    const [genresForSearch, setGenresForSearch] = useState([]);
+
+    useEffect(() => {
+      const fetchEvents = async () => {
+        setGenresForSearch(await movieClient.GetGenres());
+      }
+      fetchEvents();
+    }, []);
+
 
     return(
         <form onSubmit={(e) => {
@@ -20,8 +32,9 @@ export default function MovieSearchForm({setGenre, setNameOfMovie}) {
               Or Pick Genre
             </button>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#" onClick={(e) => setGenre(e.target.innerHTML)}>Thriller</a></li>
-              <li><a class="dropdown-item" href="#" onClick={(e) => setGenre(e.target.innerHTML)}>Fantasy</a></li>
+              {genresForSearch.map((genre, index) => (
+                <li key={index}><a class="dropdown-item" href="#" onClick={(e) => setGenre(e.target.innerHTML)}>{genre.name}</a></li>
+              ))}
             </ul>
           </div>
 

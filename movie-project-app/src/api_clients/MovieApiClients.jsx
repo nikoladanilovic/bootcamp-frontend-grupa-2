@@ -73,7 +73,14 @@ export default class MovieApiClients{
         }
     }
 
-    async AddInputedMovie(){
-        
+    async GetGenres(){
+        try{
+            const res = await axios.get(this.accessString +'api/genre/get-genres');
+            return res.data;
+        }
+        catch(err){
+            console.log("nesto nece");
+            return "nesto nece";
+        }
     }
 }

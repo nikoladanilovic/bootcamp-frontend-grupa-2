@@ -170,6 +170,7 @@ function App() {
 
       <MovieSearchForm setGenre={setGenre}
         setNameOfMovie={setNameOfMovie}
+        movieClient={movieClient}
       />
 
       {movieList.map((movie, index) => (
