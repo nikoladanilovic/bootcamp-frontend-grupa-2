@@ -13,7 +13,7 @@ export default function UserAuthForm({ setUser, setError }) {
 
     try {
       if (isLogin) {
-        // Login: Use the new login endpoint
+        
         const response = await axios.post('https://localhost:7181/api/userscontroler/login', {
           email,
           password,
@@ -23,7 +23,7 @@ export default function UserAuthForm({ setUser, setError }) {
         localStorage.setItem('user', JSON.stringify({ id: user.id, username: user.username }));
         alert('Login successful!');
       } else {
-        // Registration: Send user data without id
+       
         const userData = [{
           username,
           email,

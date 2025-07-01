@@ -18,10 +18,10 @@ function App() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
-  // Hardcoded admin user ID (replace with your admin user's UUID)
+  
   const ADMIN_ID = '7e51a570-254d-4d05-a20f-246e57e42e2d'; 
 
-  // Check for existing user in localStorage on mount
+ 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -29,7 +29,7 @@ function App() {
     }
   }, []);
 
-  // Handle logout
+ 
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -158,7 +158,7 @@ function App() {
 
   async function deleteMovie(movieId){
     if (user?.id !== ADMIN_ID) {
-      alert("Only admin can delete movies.");
+      
       return;
     }
     let pageFilteringSetup = JSON.parse(localStorage.getItem("filterSetup"));
@@ -213,7 +213,7 @@ function App() {
           {user.id === ADMIN_ID ? (
             <AddMovieInputArea />
           ) : (
-            <p className="text-center mt-4">Only admins can add movies.</p>
+            <p className="text-center mt-4">MovieReviewApp</p>
           )}
         </div>
       ) : (
