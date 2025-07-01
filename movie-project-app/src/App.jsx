@@ -156,6 +156,19 @@ function App() {
     setNameOfMovieState(movieName);
   }
 
+  async function deleteMovie(movieId){
+    let pageFilteringSetup = JSON.parse(localStorage.getItem("filterSetup"));
+    setMovieList(await movieClient.DeleteClickedMovie(
+      movieId,
+      pageFilteringSetup.releasedYearFilter,
+      pageFilteringSetup.ordering,
+      pageFilteringSetup.moviesPerPage,
+      pageFilteringSetup.page,
+      pageFilteringSetup.genre,
+      pageFilteringSetup.nameOfMovie
+    ));
+  }
+
   return (
     <div className="container">
       <Header />
@@ -176,7 +189,7 @@ function App() {
             nameOfMovie={nameOfMovie}
           />
           {movieList.map((movie, index) => (
-            <MovieCard key={index} movie={movie} />
+            <MovieCard key={index} movie={movie} deleteMovie={deleteMovie} />
           ))}
           <PageNavigation
             movieClient={movieClient}
