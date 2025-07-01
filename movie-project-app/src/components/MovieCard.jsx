@@ -1,4 +1,4 @@
-export default function MovieCard( {movie, deleteMovie} ) {
+export default function MovieCard( {movie, deleteMovie, isAdmin } ) {
 
 
     return(
@@ -11,11 +11,14 @@ export default function MovieCard( {movie, deleteMovie} ) {
           
         </div>
         <div className="col text-end">
-          <button 
-          className="delete-btn btn btn-primary" 
-          onClick={(e) => {
-            e.stopPropagation(); 
-            deleteMovie(movie.id);}}>Delete</button>
+          {isAdmin && (
+            <button
+              onClick={() => deleteMovie(movie.id)}
+              className="btn btn-primary"
+            >
+              Delete
+            </button>
+          )}
         </div>
         
       </div>

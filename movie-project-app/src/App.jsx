@@ -157,6 +157,10 @@ function App() {
   }
 
   async function deleteMovie(movieId){
+    if (user?.id !== ADMIN_ID) {
+      alert("Only admin can delete movies.");
+      return;
+    }
     let pageFilteringSetup = JSON.parse(localStorage.getItem("filterSetup"));
     setMovieList(await movieClient.DeleteClickedMovie(
       movieId,
@@ -189,7 +193,12 @@ function App() {
             movieClient={movieClient}
           />
           {movieList.map((movie, index) => (
-            <MovieCard key={index} movie={movie} deleteMovie={deleteMovie} />
+            <MovieCard
+              key={index}
+              movie={movie}
+              deleteMovie={deleteMovie}
+              isAdmin={user.id === ADMIN_ID}
+            />
           ))}
           <PageNavigation
             movieClient={movieClient}
