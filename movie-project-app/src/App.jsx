@@ -186,7 +186,7 @@ function App() {
           <MovieSearchForm
             setGenre={setGenre}
             setNameOfMovie={setNameOfMovie}
-            nameOfMovie={nameOfMovie}
+            movieClient={movieClient}
           />
           {movieList.map((movie, index) => (
             <MovieCard key={index} movie={movie} deleteMovie={deleteMovie} />
