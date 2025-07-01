@@ -1,8 +1,8 @@
-export default function MovieCard( {movie, deleteMovie, onClick } ) {
+export default function MovieCard( {movie, deleteMovie} ) {
 
 
     return(
-        <div onClick={() => onClick && onClick(movie)} className="row card mb-3 point-to-click card-hover-pop">
+        <div onClick={() => console.log("clicked on card")} className="row card mb-3 point-to-click card-hover-pop">
         <div className="col card-body">
           <h5 className="card-title">{movie.title}</h5>
           <h6 className="card-subtitle mb-2 text-body-secondary">{movie.releaseYear}</h6>

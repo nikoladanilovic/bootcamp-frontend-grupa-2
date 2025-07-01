@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import axios from 'axios';
 
 export default class MovieApiClients{
@@ -69,7 +68,6 @@ export default class MovieApiClients{
             }));
 
             return simplified;
-        // eslint-disable-next-line no-unused-vars
         }catch(err){
             return "nesto nece";
         }

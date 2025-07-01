@@ -1,3 +1,4 @@
+import axios from "axios";
 import MovieApiClients from "../api_clients/MovieApiClients";
 
 import { useEffect, useState } from "react";

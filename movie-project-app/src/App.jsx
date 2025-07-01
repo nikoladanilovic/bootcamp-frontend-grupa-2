@@ -7,7 +7,6 @@ import MovieApiClients from './api_clients/MovieApiClients';
 import PageNavigation from './components/PageNavigation';
 import AddMovieInputArea from './components/AddMovieInputArea';
 import UserAuthForm from './components/UserAuthForm';
-import MovieDetailsModal from './components/MovieDetailsModal';
 
 function App() {
   const movieClient = new MovieApiClients();
@@ -18,7 +17,6 @@ function App() {
   const [nameOfMovie, setNameOfMovieState] = useState('nothing');
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [selectedMovie, setSelectedMovie] = useState(null);
 
   // Hardcoded admin user ID (replace with your admin user's UUID)
   const ADMIN_ID = '7e51a570-254d-4d05-a20f-246e57e42e2d'; 
@@ -191,12 +189,7 @@ function App() {
             movieClient={movieClient}
           />
           {movieList.map((movie, index) => (
-            <MovieCard
-              key={index}
-              movie={movie}
-              deleteMovie={deleteMovie}
-              onClick={setSelectedMovie}
-            />
+            <MovieCard key={index} movie={movie} deleteMovie={deleteMovie} />
           ))}
           <PageNavigation
             movieClient={movieClient}
@@ -218,13 +211,6 @@ function App() {
         <UserAuthForm setUser={setUser} setError={setError} />
       )}
       {error && <p className="text-red-600 text-center mt-4">{error}</p>}
-      {selectedMovie && (
-        <MovieDetailsModal
-          movie={selectedMovie}
-          user={user}
-          onClose={() => setSelectedMovie(null)}
-        />
-      )}
     </div>
   );
 }
