@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import axios from 'axios';
 
 export default class MovieApiClients{
@@ -78,7 +79,7 @@ export default class MovieApiClients{
             const res = await axios.get(this.accessString +'api/genre/get-genres');
             return res.data;
         }
-        catch(err){
+        catch{
             console.log("nesto nece");
             return "nesto nece";
         }
