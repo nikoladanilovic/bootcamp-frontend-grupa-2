@@ -8,6 +8,7 @@ import PageNavigation from './components/PageNavigation';
 import AddMovieInputArea from './components/AddMovieInputArea';
 import UserAuthForm from './components/UserAuthForm';
 import MovieDetailsModal from './components/MovieDetailsModal';
+import UserPage from './components/UserPage'; // Dodaj na vrh s importima
 
 function App() {
   const movieClient = new MovieApiClients();
@@ -19,9 +20,10 @@ function App() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [showProfile, setShowProfile] = useState(false); // Dodaj novi state
 
   // Hardcoded admin user ID (replace with your admin user's UUID)
-  const ADMIN_ID = '7e51a570-254d-4d05-a20f-246e57e42e2d'; 
+  const ADMIN_ID = '9af268ff-86ee-471f-b4f0-90d44782620f'; 
 
   // Check for existing user in localStorage on mount
   useEffect(() => {
@@ -171,6 +173,7 @@ function App() {
     ));
   }
 
+  
   return (
     <div className="container">
       <Header />
@@ -178,40 +181,54 @@ function App() {
         <div>
           <div className="flex justify-between items-center mb-4">
             <h3>Welcome, {user.username} {user.id === ADMIN_ID ? '(Admin)' : ''}!</h3>
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 text-white px-4 py-2 rounded"
-            >
-              Logout
-            </button>
+            <div>
+              <button
+                onClick={() => setShowProfile(!showProfile)}
+                className="bg-blue-600 text-white px-4 py-2 rounded me-2"
+              >
+                {showProfile ? "Home" : "Profile"}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-4 py-2 rounded"
+              >
+                Logout
+              </button>
+            </div>
           </div>
-          <MovieSearchForm
-            setGenre={setGenre}
-            setNameOfMovie={setNameOfMovie}
-            movieClient={movieClient}
-          />
-          {movieList.map((movie, index) => (
-            <MovieCard
-              key={index}
-              movie={movie}
-              deleteMovie={deleteMovie}
-              onClick={setSelectedMovie}
-            />
-          ))}
-          <PageNavigation
-            movieClient={movieClient}
-            changeCurrentPage={changeCurrentPage}
-            pageSize={
-              JSON.parse(localStorage.getItem('filterSetup'))?.moviesPerPage ?? pageSize
-            }
-            currentPage={currentPage}
-            genre={genre}
-            nameOfMovie={nameOfMovie}
-          />
-          {user.id === ADMIN_ID ? (
-            <AddMovieInputArea />
+          {showProfile ? (
+            <UserPage user={user} />
           ) : (
-            <p className="text-center mt-4">Only admins can add movies.</p>
+            <>
+              <MovieSearchForm
+                setGenre={setGenre}
+                setNameOfMovie={setNameOfMovie}
+                movieClient={movieClient}
+              />
+              {movieList.map((movie, index) => (
+                <MovieCard
+                  key={index}
+                  movie={movie}
+                  deleteMovie={deleteMovie}
+                  onClick={setSelectedMovie}
+                />
+              ))}
+              <PageNavigation
+                movieClient={movieClient}
+                changeCurrentPage={changeCurrentPage}
+                pageSize={
+                  JSON.parse(localStorage.getItem('filterSetup'))?.moviesPerPage ?? pageSize
+                }
+                currentPage={currentPage}
+                genre={genre}
+                nameOfMovie={nameOfMovie}
+              />
+              {user.id === ADMIN_ID ? (
+                <AddMovieInputArea />
+              ) : (
+                <p className="text-center mt-4">Only admins can add movies.</p>
+              )}
+            </>
           )}
         </div>
       ) : (

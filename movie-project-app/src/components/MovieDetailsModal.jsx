@@ -7,6 +7,9 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
   const [editMode, setEditMode] = useState(false);
+  const [avgRating, setAvgRating] = useState(null);
+  const [director, setDirector] = useState(null);
+  const [genres, setGenres] = useState([]);
 
   // Fetch all reviews for this movie
   useEffect(() => {
@@ -29,12 +32,36 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
             setRating(5);
           }
         }
+
+        // Calculate average rating
+        if (movieReviews.length > 0) {
+          setAvgRating(
+            (movieReviews.reduce((acc, r) => acc + r.rating, 0) / movieReviews.length).toFixed(2)
+          );
+        } else {
+          setAvgRating(null);
+        }
       } catch {
         setReviews([]);
       }
     }
     fetchReviews();
   }, [movie.id, user]);
+
+  // Fetch movie details
+  useEffect(() => {
+    async function fetchMovieDetails() {
+      try {
+        const movieRes = await axios.get(`https://localhost:7181/api/movie/${movie.id}`);
+        setDirector(movieRes.data.director || null);
+        setGenres(movieRes.data.genres || []);
+      } catch {
+        setDirector(null);
+        setGenres([]);
+      }
+    }
+    fetchMovieDetails();
+  }, [movie.id]);
 
   // Create or update review
   async function handleSaveReview() {
@@ -74,6 +101,15 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
     setMyReview(mine);
     setReviewText(mine ? mine.comment : ""); // <-- koristi comment
     setRating(mine ? mine.rating : 5);
+
+    // Calculate average rating
+    if (movieReviews.length > 0) {
+      setAvgRating(
+        (movieReviews.reduce((acc, r) => acc + r.rating, 0) / movieReviews.length).toFixed(2)
+      );
+    } else {
+      setAvgRating(null);
+    }
   }
 
   // Delete review
@@ -103,6 +139,16 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
           </div>
           <div className="modal-body">
             <p>{movie.description}</p>
+            <div className="mb-2">
+              <b>Director:</b> {director ? director.name : "Unknown"}
+            </div>
+            <div className="mb-3">
+              <b>Genres:</b> {genres.length > 0 ? genres.map(g => g.name).join(", ") : "Unknown"}
+            </div>
+            <div className="mb-2">
+              <b>Average rating:</b>{" "}
+              {avgRating !== null ? <span>{avgRating} / 5</span> : <span>No ratings yet</span>}
+            </div>
             <h6>Reviews:</h6>
             <ul className="list-group mb-3">
               {reviews.length === 0 && (
