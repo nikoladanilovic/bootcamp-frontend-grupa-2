@@ -10,6 +10,7 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
   const [avgRating, setAvgRating] = useState(null);
   const [director, setDirector] = useState(null);
   const [genres, setGenres] = useState([]);
+  const [actors, setActors] = useState([]);
 
   // Fetch all reviews for this movie
   useEffect(() => {
@@ -55,9 +56,11 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
         const movieRes = await axios.get(`https://localhost:7181/api/movie/${movie.id}`);
         setDirector(movieRes.data.director || null);
         setGenres(movieRes.data.genres || []);
+        setActors(movieRes.data.actors || []);
       } catch {
         setDirector(null);
         setGenres([]);
+        setActors([]);
       }
     }
     fetchMovieDetails();
@@ -144,6 +147,9 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
             </div>
             <div className="mb-3">
               <b>Genres:</b> {genres.length > 0 ? genres.map(g => g.name).join(", ") : "Unknown"}
+            </div>
+            <div className="mb-3">
+              <b>Actors:</b> {actors.length > 0 ? actors.map(a => a.name).join(", ") : "Unknown"}
             </div>
             <div className="mb-2">
               <b>Average rating:</b>{" "}

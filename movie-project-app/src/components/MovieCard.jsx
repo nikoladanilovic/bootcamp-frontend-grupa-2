@@ -1,4 +1,4 @@
-export default function MovieCard({ movie, deleteMovie, isAdmin, onClick }) {
+export default function MovieCard({ movie, onClick }) {
   return (
     <div
       className="row card mb-3 point-to-click card-hover-pop"
@@ -14,19 +14,6 @@ export default function MovieCard({ movie, deleteMovie, isAdmin, onClick }) {
           {movie.duration} minutes
         </h6>
         <p className="card-text">{movie.description}</p>
-      </div>
-      <div className="col text-end">
-        {isAdmin && (
-          <button
-            className="delete-btn btn btn-primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteMovie(movie.id);
-            }}
-          >
-            Delete
-          </button>
-        )}
       </div>
     </div>
   );

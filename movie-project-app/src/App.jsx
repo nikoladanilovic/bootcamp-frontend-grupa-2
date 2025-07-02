@@ -8,7 +8,7 @@ import PageNavigation from './components/PageNavigation';
 import AddMovieInputArea from './components/AddMovieInputArea';
 import UserAuthForm from './components/UserAuthForm';
 import MovieDetailsModal from './components/MovieDetailsModal';
-import UserPage from './components/UserPage'; // Dodaj ovu liniju
+import UserPage from './components/UserPage';
 
 function App() {
   const movieClient = new MovieApiClients();
@@ -19,8 +19,9 @@ function App() {
   const [nameOfMovie, setNameOfMovieState] = useState('nothing');
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [selectedMovie, setSelectedMovie] = useState(null); // Za detalje filma
-  const [showProfile, setShowProfile] = useState(false); // Za user page
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showAddMoviePage, setShowAddMoviePage] = useState(false); // Dodano za admin AddMoviePage
 
   const ADMIN_ID = '9af268ff-86ee-471f-b4f0-90d44782620f';
 
@@ -35,6 +36,7 @@ function App() {
     setUser(null);
     localStorage.removeItem('user');
     setShowProfile(false);
+    setShowAddMoviePage(false);
     alert('Logged out successfully!');
   };
 
@@ -158,6 +160,20 @@ function App() {
     setNameOfMovieState(movieName);
   }
 
+  const refreshMovies = async () => {
+    let pageFilteringSetup = JSON.parse(localStorage.getItem('filterSetup'));
+    setMovieList(
+      await movieClient.Get(
+        pageFilteringSetup.releasedYearFilter,
+        pageFilteringSetup.ordering,
+        pageFilteringSetup.moviesPerPage,
+        pageFilteringSetup.page,
+        pageFilteringSetup.genre,
+        pageFilteringSetup.nameOfMovie
+      )
+    );
+  };
+
   async function deleteMovie(movieId){
     if (user?.id !== ADMIN_ID) {
       return;
@@ -182,12 +198,32 @@ function App() {
           <div className="flex justify-between items-center mb-4">
             <h3>Welcome, {user.username} {user.id === ADMIN_ID ? '(Admin)' : ''}!</h3>
             <div>
-              <button
-                onClick={() => setShowProfile(!showProfile)}
-                className="bg-blue-600 text-white px-4 py-2 rounded me-2"
-              >
-                {showProfile ? "Home" : "Profile"}
-              </button>
+              {/* Home tipka samo kad je AddMoviePage */}
+              {showAddMoviePage && (
+                <button
+                  onClick={() => { setShowAddMoviePage(false); setShowProfile(false); }}
+                  className="bg-blue-600 text-white px-4 py-2 rounded me-2"
+                >
+                  Home
+                </button>
+              )}
+              {/* Profile/Home toggle tipka samo kad nije AddMoviePage */}
+              {!showAddMoviePage && (
+                <button
+                  onClick={() => setShowProfile(!showProfile)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded me-2"
+                >
+                  {showProfile ? "Home" : "Profile"}
+                </button>
+              )}
+              {user.id === ADMIN_ID && !showAddMoviePage && !showProfile && (
+                <button
+                  onClick={() => setShowAddMoviePage(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded me-2"
+                >
+                  Manage Movies
+                </button>
+              )}
               <button
                 onClick={handleLogout}
                 className="bg-red-600 text-white px-4 py-2 rounded"
@@ -198,6 +234,8 @@ function App() {
           </div>
           {showProfile ? (
             <UserPage user={user} />
+          ) : showAddMoviePage ? (
+            <AddMovieInputArea onMoviesChanged={refreshMovies} />
           ) : (
             <>
               <MovieSearchForm
@@ -224,11 +262,9 @@ function App() {
                 genre={genre}
                 nameOfMovie={nameOfMovie}
               />
-              {user.id === ADMIN_ID ? (
-                <AddMovieInputArea />
-              ) : (
-                <p className="text-center mt-4">MovieReviewApp</p>
-              )}
+              {/* Admin više nema AddMovieInputArea na home, samo na AddMoviePage */}
+              {/* Običan user nema AddMovie tipku nigdje */}
+              <p className="text-center mt-4">MovieReviewApp</p>
             </>
           )}
         </div>
