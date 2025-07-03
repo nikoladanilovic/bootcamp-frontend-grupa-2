@@ -15,6 +15,11 @@ export default function AddMovieInputArea({ onMoviesChanged }){
   const [selectedGenres, setSelectedGenres] = useState([]);
 
   const [directors, setDirectors] = useState([]);
+  const [directorSearch, setDirectorSearch] = useState('');
+  const [directorPage, setDirectorPage] = useState(1);
+  const [hasMoreDirectors, setHasMoreDirectors] = useState(true);
+  const DIRECTORS_PAGE_SIZE = 4;
+
   const [useExistingDirector, setUseExistingDirector] = useState(true);
   const [directorId, setDirectorId] = useState('');
   const [newDirectorName, setNewDirectorName] = useState('');
@@ -24,11 +29,32 @@ export default function AddMovieInputArea({ onMoviesChanged }){
   const [actors, setActors] = useState([]);
   const [selectedActors, setSelectedActors] = useState([]);
 
-  useEffect(() => {
-    axios.get("https://localhost:7181/"+'api/director')
-      .then(res => setDirectors(res.data))
-      .catch(err => console.error(err));
+  const [showDirectorDropdown, setShowDirectorDropdown] = useState(false);
+  const directorDropdownRef = React.useRef();
 
+  const fetchDirectors = async (search = '', page = 1) => {
+    try {
+      const res = await axios.get(
+        `https://localhost:7181/api/director?search=${encodeURIComponent(search)}&page=${page}&pageSize=${DIRECTORS_PAGE_SIZE}`
+      );
+      if (page === 1) {
+        setDirectors(res.data);
+      } else {
+        setDirectors(prev => [...prev, ...res.data]);
+      }
+      setHasMoreDirectors(res.data.length === DIRECTORS_PAGE_SIZE);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchDirectors(directorSearch, 1);
+    setDirectorPage(1);
+    setHasMoreDirectors(true);
+  }, [directorSearch]);
+
+  useEffect(() => {
     axios.get("https://localhost:7181/"+'api/genre/get-genres')
       .then(res => setGenres(res.data))
       .catch(err => console.error(err));
@@ -77,11 +103,9 @@ export default function AddMovieInputArea({ onMoviesChanged }){
         "nothing"
       );
     }
-    // Refresh movie list u ovom ekranu
     const allMovies = await movieClient.Get(1900, "ASC", 1000, 1, "nothing", "nothing");
     setMovies(allMovies);
     setSelectedMovies([]);
-    // Pozovi refresh i na početnom ekranu!
     if (onMoviesChanged) onMoviesChanged();
   };
 
@@ -127,12 +151,35 @@ export default function AddMovieInputArea({ onMoviesChanged }){
       setNewDirectorNationality('');
       setSelectedActors([]);
 
-      // Pozovi refresh filmova na početnom ekranu
       if (onMoviesChanged) onMoviesChanged();
     } catch (error) {
       console.error('Error creating movie:', error);
       alert('Failed to create movie');
     }
+  };
+
+  const handleDirectorScroll = (e) => {
+    const bottom = Math.abs(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight) < 5;
+    if (bottom && hasMoreDirectors) {
+      const nextPage = directorPage + 1;
+      fetchDirectors(directorSearch, nextPage);
+      setDirectorPage(nextPage);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (directorDropdownRef.current && !directorDropdownRef.current.contains(event.target)) {
+        setShowDirectorDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleDirectorSelect = (id) => {
+    setDirectorId(id);
+    setShowDirectorDropdown(false);
   };
 
   return (
@@ -158,11 +205,66 @@ export default function AddMovieInputArea({ onMoviesChanged }){
         </div>
 
         {useExistingDirector ? (
-          <select value={directorId} onChange={e => setDirectorId(e.target.value)}
-            required className="m-4 w-full p-2 border rounded">
-            <option value="">Select Director</option>
-            {directors.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-          </select>
+          <div className="m-4 w-full" ref={directorDropdownRef}>
+            <div
+              className="w-full p-2 border rounded mb-2 cursor-pointer"
+              style={{
+                background: '#2d2d2d',
+                color: '#fff',          
+                border: '1px solid #444'
+              }}
+              onClick={() => setShowDirectorDropdown((prev) => !prev)}
+              tabIndex={0}
+            >
+              {directors.find(d => d.id === directorId)?.name || "Select Director"}
+            </div>
+            {showDirectorDropdown && (
+              <div
+                style={{
+                  maxHeight: 200,
+                  overflowY: 'auto',
+                  position: 'absolute',
+                  zIndex: 10,
+                  width: '100%',
+                  background: '#2d2d2d',
+                  color: '#fff',
+                  border: '1px solid #444', 
+                }}
+                className="rounded shadow"
+                onScroll={handleDirectorScroll}
+              >
+                <input
+                  type="text"
+                  placeholder="Search director..."
+                  value={directorSearch}
+                  onChange={e => {
+                    setDirectorSearch(e.target.value);
+                    setDirectorPage(1);
+                    fetchDirectors(e.target.value, 1);
+                  }}
+                  className="w-full p-2 border-b"
+                  autoFocus
+                  style={{ background: '#2d2d2d', color: '#fff', border: 'none' }}
+                />
+                {directors.length === 0 && (
+                  <div className="p-2 text-gray-300">No directors found.</div>
+                )}
+                {directors.map(d => (
+                  <div
+                    key={d.id}
+                    className={`p-2 hover:bg-gray-600 cursor-pointer ${directorId === d.id ? "bg-gray-700" : ""}`}
+                    style={{ color: '#fff' }}
+                    onClick={() => handleDirectorSelect(d.id)}
+                  >
+                    {d.name}
+                  </div>
+                ))}
+                {hasMoreDirectors && (
+                  <div className="p-2 text-center text-gray-300">Scroll for more...</div>
+                )}
+              </div>
+            )}
+          </div>
         ) : (
           <>
             <input type="text" placeholder="New Director Name" value={newDirectorName}

@@ -70,12 +70,11 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
   async function handleSaveReview() {
     if (!reviewText.trim()) return;
     if (myReview) {
-      // Update
       await axios.put(
         `https://localhost:7181/api/review/update-review?id=${myReview.id}`,
         {
           ...myReview,
-          comment: reviewText, // <-- koristi comment
+          comment: reviewText, 
           rating,
         }
       );
@@ -85,9 +84,9 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
         `https://localhost:7181/api/review/create-review`,
         [
           {
-            userId: user.userId || user.id, // koristi userId ako postoji, fallback na id
+            userId: user.userId || user.id, 
             movieId: movie.id,
-            comment: reviewText, // <-- koristi comment
+            comment: reviewText, 
             rating,
           },
         ]
@@ -102,7 +101,7 @@ export default function MovieDetailsModal({ movie, user, onClose }) {
     setReviews(movieReviews);
     const mine = movieReviews.find(r => r.userId === user.id);
     setMyReview(mine);
-    setReviewText(mine ? mine.comment : ""); // <-- koristi comment
+    setReviewText(mine ? mine.comment : ""); 
     setRating(mine ? mine.rating : 5);
 
     // Calculate average rating

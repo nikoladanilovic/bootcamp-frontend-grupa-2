@@ -21,7 +21,7 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
-  const [showAddMoviePage, setShowAddMoviePage] = useState(false); // Dodano za admin AddMoviePage
+  const [showAddMoviePage, setShowAddMoviePage] = useState(false); 
 
   const ADMIN_ID = '9af268ff-86ee-471f-b4f0-90d44782620f';
 
